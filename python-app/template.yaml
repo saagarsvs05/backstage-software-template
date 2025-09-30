@@ -29,6 +29,18 @@ spec:
             - dev
             - qa            
             - prod
+    - title: Choose a Location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+
 
   # here's the steps that are executed in series in the scaffolder backend
   steps:
@@ -45,11 +57,9 @@ spec:
       name: Publish
       action: publish:github
       input:
-        allowedHosts:
-          - github.com
         description: This is ${{ parameters.component_id }}
         repoUrl: github.com?owner=saagarsvs05&repo=${{ parameters.component_id }}
-        protectDefaultBranch: false
+        defaultBranch: 'main'
         repoVisibility: public
 
     - id: register
