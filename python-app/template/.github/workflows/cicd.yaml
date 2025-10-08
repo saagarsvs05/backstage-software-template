@@ -36,10 +36,13 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
     steps:
+      - name: Install ArgoCD CLI
+        run: |
+          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
 
       - name: Argocd app sync
         shell: bash
         run: |
           argocd login argocd.test.com --password ${{ secrets.ARGOCD_PASSWORD }} --username {{ var.ARGOCD_USERNAME }} --insecure
-          argocd app sync python-app1
-          
+          argocd app sync ${{values.app_name}}
