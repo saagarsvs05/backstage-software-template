@@ -31,15 +31,24 @@ spec:
             - prod
     - title: Choose a Location
       required:
-        - repoUrl
+        - host
+        - owner
+        - repo
       properties:
-        repoUrl:
-          title: Repository Location
+        host:
+          title: Git Host
           type: string
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
+          default: github.com
+          enum:
               - github.com
+        owner:
+          title: Owner Name
+          type: string
+          description: Name of the user or organization that will own the repository
+        repo:
+          title: Repository Name
+          type: string
+          description: Name of the repository to be created
 
 
   # here's the steps that are executed in series in the scaffolder backend
@@ -58,7 +67,7 @@ spec:
       action: publish:github
       input:
         description: This is ${{ parameters.component_id }}
-        repoUrl: github.com?owner=saagarsvs05&repo=${{ parameters.component_id }}
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.repo }}
         defaultBranch: 'main'
         repoVisibility: public
 
