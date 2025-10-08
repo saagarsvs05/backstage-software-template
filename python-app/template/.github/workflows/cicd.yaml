@@ -33,7 +33,7 @@ jobs:
             saagarsvs/${{values.app_name}}:latest
 
   cd:
-    need: ci
+    needs: ci
     runs-on: ubuntu-latest
     steps:
 
