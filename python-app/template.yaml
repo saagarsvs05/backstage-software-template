@@ -44,6 +44,7 @@ spec:
         owner:
           title: Owner Name
           type: string
+          default: saagarsvs007
           description: Name of the user or organization that will own the repository
         repo:
           title: Repository Name
