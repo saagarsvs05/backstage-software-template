@@ -53,7 +53,7 @@ jobs:
           sudo apt update && sudo apt install ngrok -y
       - name: Start ngrok tunnel
         run: |
-          ngrok config add-authtoken ${{ secrets.NGROK_TOKEN }}
+          ngrok config add-authtoken ${{ '${{ secrets.NGROK_TOKEN }}' }}
           nohup ngrok http 8000 > /tmp/ngrok.log &
           sleep 6
           echo "Fetching the public URL from ngrok logs"
