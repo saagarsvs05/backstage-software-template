@@ -1,0 +1,66 @@
+name: ${{values.app_name}}-cicicd
+
+on:
+  push:
+    paths:
+      - src/**
+    branches:
+      - main
+
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up short SHA
+        id: vars
+        run: echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-6)" >> $GITHUB_OUTPUT
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ '${{ vars.DOCKERHUB_USERNAME }}' }}
+          password: ${{ '${{ secrets.DOCKERHUB_TOKEN }}' }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            saagarsvs/${{values.app_name}}:latest
+  cd:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Pull Image from Docker Hub
+        run: |
+          docker pull saagarsvs/${{values.app_name}}:latest
+      - name: Run API Container
+        run: |
+          docker run -d -p 8000:8000 --name ${{values.app_name}} saagarsvs/${{values.app_name}}:latest
+          sleep 5
+          docker ps
+      - name: Install ngrok
+        run: |
+          curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
+          echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && \
+          sudo apt update && sudo apt install ngrok -y
+      - name: Start ngrok tunnel
+        run: |
+          ngrok config add-authtoken ${{ secrets.NGROK_TOKEN }}
+          nohup ngrok http 8000 > /tmp/ngrok.log &
+          sleep 6
+          echo "Fetching the public URL from ngrok logs"
+          curl -s http://127.0.0.1:4040/api/tunnels > tunnels.json
+          echo "Public URL"
+          cat tunnels.json | grep -o 'https://[^"]*\.ngrok-free\.app' || true
+      - name: Keep container running
+        run: |
+          echo "Container is running. Keeping the job alive for 10 minutes."
+          sleep 600
