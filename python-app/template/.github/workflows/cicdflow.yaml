@@ -43,7 +43,7 @@ jobs:
           docker pull saagarsvs/${{values.app_name}}:latest
       - name: Run API Container
         run: |
-          docker run -d -p 8000:8000 --name ${{values.app_name}} saagarsvs/${{values.app_name}}:latest
+          docker run -d -p 5000:5000 --name ${{values.app_name}} saagarsvs/${{values.app_name}}:latest
           sleep 5
           docker ps
       - name: Install ngrok
@@ -54,7 +54,7 @@ jobs:
       - name: Start ngrok tunnel
         run: |
           ngrok config add-authtoken ${{ '${{ secrets.NGROK_TOKEN }}' }}
-          nohup ngrok http 8000 > /tmp/ngrok.log &
+          nohup ngrok http 5000 > /tmp/ngrok.log &
           sleep 6
           echo "Fetching the public URL from ngrok logs"
           curl -s http://127.0.0.1:4040/api/tunnels > tunnels.json
