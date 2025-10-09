@@ -62,7 +62,8 @@ jobs:
           cat tunnels.json | grep -o 'https://[^"]*\.ngrok-free\.app' || true
           NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
           echo "NGROK_URL=$NGROK_URL" >> $GITHUB_OUTPUT
-          echo "::set-output name=ngrok_url::$NGROK_URL"
+      - name: Set output
+        run: echo "ngrok_url=$NGROK_URL" >> $GITHUB_OUTPUT
       - name: Output ngrok URL
         run: |
           echo "The public URL for the Flask app is: ${{ '${{ steps.ngrok.outputs.ngrok_url }}' }}"

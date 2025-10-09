@@ -11,7 +11,7 @@ def details():
         'time': datetime.datetime.now().strftime("%I:%M:%S %p on %B %d, %Y"),
         'hostname': socket.gethostname(),
         'ip': socket.gethostbyname(socket.gethostname()),
-        'message': 'Hello World from Flask!!!!'
+        'message': 'Hello World from Flask!!!'
         'app_name': '${{values.app_name}}',
         'env': '${{values.app_env}}'
     })
