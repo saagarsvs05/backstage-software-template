@@ -3,8 +3,8 @@ kind: Component
 metadata:
   name: ${{values.app_name}}
   description: A Node.js REST API scaffolded from Backstage
-  tags:
-    - nodejs
+  annotations:
+    github.com/project-slug: saagarsvs05/${{values.app_name}}
 spec:
   type: service
   lifecycle: experimental

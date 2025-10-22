@@ -26,27 +26,27 @@ spec:
             - dev
             - qa            
             - prod
-    - title: Choose a Location
-      required:
-        - host
-        - owner
-        - repo
-      properties:
-        host:
-          title: Git Host
-          type: string
-          default: github.com
-          enum:
-              - github.com
-        owner:
-          title: Owner Name
-          type: string
-          default: saagarsvs007
-          description: Name of the user or organization that will own the repository
-        repo:
-          title: Repository Name
-          type: string
-          description: Name of the repository to be created
+    # - title: Choose a Location
+    #   required:
+    #     - host
+    #     - owner
+    #     - repo
+    #   properties:
+    #     host:
+    #       title: Git Host
+    #       type: string
+    #       default: github.com
+    #       enum:
+    #           - github.com
+    #     owner:
+    #       title: Owner Name
+    #       type: string
+    #       default: saagarsvs007
+    #       description: Name of the user or organization that will own the repository
+    #     repo:
+    #       title: Repository Name
+    #       type: string
+    #       description: Name of the repository to be created
   steps:
     - id: fetch
       name: Fetch Skeleton
@@ -60,7 +60,9 @@ spec:
       name: Publish to GitHub
       action: publish:github
       input:
-        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.repo }}
+        allowedHosts:
+          - github.com
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.component_id }}
         description: Node.js service scaffolded from Backstage
         defaultBranch: 'main'
         repoVisibility: public
