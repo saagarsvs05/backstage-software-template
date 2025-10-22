@@ -1,0 +1,669 @@
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Error Message -->
+    <div *ngIf="error" class="mb-8 card-glass border-l-4 border-red-500 bg-red-50">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-red-700 font-medium">{{ error }}</span>
+        </div>
+        <button (click)="clearError()" class="text-red-500 hover:text-red-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-16">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-4 animate-pulse">
+        <svg class="w-8 h-8 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+      </div>
+      <p class="text-gray-600 font-medium">Loading your projects...</p>
+    </div>
+
+    <!-- Big Card Container -->
+    <div class="bg-white rounded-3xl shadow-2xl mb-12 slide-in-up" *ngIf="!loading">
+      <!-- Gradient Border Effect -->
+      <div class="h-2 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-3xl"></div>
+      
+      <div class="p-8 md:p-12">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+          <div class="mb-6">
+            <img src="/logo.png" alt="LaunchPad Logo" class="w-16 h-16 object-contain mx-auto hover:scale-110 transition-transform duration-300">
+          </div>
+          <h1 class="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-purple-600 via-violet-500 to-pink-500 bg-clip-text text-transparent drop-shadow-sm">
+            LaunchPad
+          </h1>
+          <p class="text-lg md:text-xl text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed mb-6">
+            <strong>Launch Pad</strong> is the centralized collection of our <strong>Digital Engineering Studio IP</strong> — accelerators, components, and reference apps — curated to shorten the path from idea to <em>launch</em>.
+          </p>
+          <p class="text-base md:text-lg text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed">
+            This initiative is <strong>powered by GenAI</strong>, enabling faster prototyping, smarter workflows, and reusable building blocks for web and mobile experiences.
+          </p>
+          
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-3 justify-center mt-8">
+            <button (click)="exportApps()" 
+                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-400 text-white font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300 text-sm">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Export Data
+            </button>
+            
+            <label class="inline-flex items-center px-4 py-2 btn-glass hover:shadow-lg transition-all duration-300 cursor-pointer text-sm">
+              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+              </svg>
+              Import Data
+              <input type="file" accept=".json" (change)="importApps($event)" class="hidden">
+            </label>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="stats">
+      <!-- Total Apps Card -->
+      <div class="card-glass hover-lift stagger-1" 
+           [class]="'slide-in-up stagger-1'">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-black text-gray-800">{{ stats.totalApps }}</div>
+            <div class="text-xs text-gray-600 font-medium">Total Projects</div>
+          </div>
+        </div>
+        <div class="text-gray-700 font-medium text-sm">Portfolio Items</div>
+      </div>
+
+      <!-- Active Apps Card -->
+      <div class="card-glass hover-lift stagger-2" 
+           [class]="'slide-in-up stagger-2'">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="text-right">
+            <div class="text-3xl font-black text-gray-800">{{ stats.activeApps }}</div>
+            <div class="text-sm text-gray-600 font-medium">Active</div>
+          </div>
+        </div>
+        <div class="text-gray-700 font-medium">Live Projects</div>
+      </div>
+
+      <!-- In Progress Card -->
+      <div class="card-glass hover-lift stagger-3" 
+           [class]="'slide-in-up stagger-3'">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="text-right">
+            <div class="text-3xl font-black text-gray-800">{{ stats.inProgressApps }}</div>
+            <div class="text-sm text-gray-600 font-medium">In Progress</div>
+          </div>
+        </div>
+        <div class="text-gray-700 font-medium">Development</div>
+      </div>
+
+      <!-- Archived Card -->
+      <div class="card-glass hover-lift stagger-4" 
+           [class]="'slide-in-up stagger-4'">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-gray-500 to-slate-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l4 4-4 4m6-4h6"></path>
+            </svg>
+          </div>
+          <div class="text-right">
+            <div class="text-3xl font-black text-gray-800">{{ stats.archivedApps }}</div>
+            <div class="text-sm text-gray-600 font-medium">Archived</div>
+          </div>
+        </div>
+        <div class="text-gray-700 font-medium">Completed</div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- Tech Stack Section -->
+    <!-- <div class="mb-12" *ngIf="stats">
+      <div class="card-glass stagger-5" [class]="'slide-in-up stagger-5'">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Technology Stack</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div *ngFor="let tech of getTopTechStacks(); let i = index" 
+               class="group bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/50 hover:bg-white/70 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+               [style.animation-delay]="(i * 0.1) + 's'"
+               [class]="'slide-in-up'">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                <span class="text-lg font-bold gradient-text-purple">{{ tech.name.charAt(0) }}</span>
+              </div>
+              <h3 class="text-gray-800 font-semibold mb-1 text-sm">{{ tech.name }}</h3>
+              <div class="text-gray-600 text-xs">{{ tech.count }} project{{ tech.count > 1 ? 's' : '' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- Search and Filter Section -->
+    <div class="card-glass mb-8 stagger-1" [class]="'slide-in-up stagger-1'">
+      <div class="flex flex-col lg:flex-row gap-4">
+        <!-- Search Bar -->
+        <div class="flex-1">
+          <div class="relative">
+            <input 
+              type="text" 
+              [(ngModel)]="filters.searchTerm"
+              (ngModelChange)="onSearchChange()"
+              placeholder="Search projects, technologies, or tags..."
+              class="w-full px-4 py-3 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+            <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Filter Toggle -->
+        <button 
+          (click)="toggleFilters()"
+          class="inline-flex items-center px-4 py-3 btn-glass hover:shadow-lg transition-all duration-300 text-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+          </svg>
+          Filters
+        </button>
+
+        <!-- View Toggle -->
+        <button 
+          (click)="toggleViewMode()"
+          class="inline-flex items-center px-4 py-3 btn-glass hover:shadow-lg transition-all duration-300 text-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" *ngIf="viewMode === 'grid'">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z"></path>
+          </svg>
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" *ngIf="viewMode === 'list'">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+          </svg>
+          {{ viewMode === 'grid' ? 'Grid' : 'List' }}
+        </button>
+      </div>
+
+      <!-- Advanced Filters -->
+      <div class="mt-8" *ngIf="showFilters">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Tech Stack Filter -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-3">Technology Stack</label>
+            <div class="space-y-2 max-h-40 overflow-y-auto">
+              <label *ngFor="let tech of allTechStacks" class="flex items-center">
+                <input 
+                  type="checkbox" 
+                  [value]="tech"
+                  [(ngModel)]="filters.techStack"
+                  (ngModelChange)="onFilterChange()"
+                  class="mr-3 rounded border-gray-300 text-purple-500 focus:ring-purple-500/50">
+                <span class="text-gray-600 text-sm">{{ tech }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Tags Filter -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-3">Tags</label>
+            <div class="space-y-2 max-h-40 overflow-y-auto">
+              <label *ngFor="let tag of allTags" class="flex items-center">
+                <input 
+                  type="checkbox" 
+                  [value]="tag"
+                  [(ngModel)]="filters.tags"
+                  (ngModelChange)="onFilterChange()"
+                  class="mr-3 rounded border-gray-300 text-purple-500 focus:ring-purple-500/50">
+                <span class="text-gray-600 text-sm">{{ tag }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Status Filter -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-3">Status</label>
+            <div class="space-y-2">
+              <label class="flex items-center">
+                <input 
+                  type="checkbox" 
+                  value="active"
+                  [(ngModel)]="filters.status"
+                  (ngModelChange)="onFilterChange()"
+                  class="mr-3 rounded border-gray-300 text-green-500 focus:ring-green-500/50">
+                <span class="text-gray-600 text-sm">Active</span>
+              </label>
+              <label class="flex items-center">
+                <input 
+                  type="checkbox" 
+                  value="in-progress"
+                  [(ngModel)]="filters.status"
+                  (ngModelChange)="onFilterChange()"
+                  class="mr-3 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500/50">
+                <span class="text-gray-600 text-sm">In Progress</span>
+              </label>
+              <label class="flex items-center">
+                <input 
+                  type="checkbox" 
+                  value="archived"
+                  [(ngModel)]="filters.status"
+                  (ngModelChange)="onFilterChange()"
+                  class="mr-3 rounded border-gray-300 text-gray-500 focus:ring-gray-500/50">
+                <span class="text-gray-600 text-sm">Archived</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clear Filters -->
+        <div class="mt-6 text-center">
+          <button 
+            (click)="clearFilters()"
+            class="inline-flex items-center px-6 py-3 btn-glass hover:shadow-lg transition-all duration-300">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Clear All Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects Grid/List -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" *ngIf="viewMode === 'grid'">
+      <div *ngFor="let app of filteredApps; let i = index" 
+           class="card-glass hover-lift"
+           [style.animation-delay]="(i * 0.1) + 's'"
+           [class]="'slide-in-up'"
+           [attr.data-app-id]="app.id">
+        
+        <!-- Project Header -->
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <h3 class="text-lg font-bold text-gray-800 mb-1 group-hover:text-purple-600 transition-colors">{{ app.name }}</h3>
+            <p class="text-gray-600 line-clamp-2 text-sm">{{ app.description }}</p>
+          </div>
+          <span [class]="'px-2 py-1 rounded-full text-xs font-semibold ' + getStatusColor(app.status)">
+            {{ app.status }}
+          </span>
+        </div>
+
+        <!-- Preview Image -->
+        <div class="mb-4 relative">
+          <div class="aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+            <!-- Preview Image -->
+            <img *ngIf="getPreviewImage(app) && !isLoadingPreview(app.id)" 
+                 [src]="getPreviewImage(app)" 
+                 [alt]="app.name + ' preview'"
+                 class="w-full h-full object-cover"
+                 (error)="onImageError($event)">
+            
+            <!-- Loading State -->
+            <div *ngIf="isLoadingPreview(app.id)" 
+                 class="w-full h-full flex items-center justify-center bg-gray-50">
+              <div class="flex flex-col items-center text-gray-500">
+                <svg class="w-6 h-6 animate-spin mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span class="text-xs">Loading preview...</span>
+              </div>
+            </div>
+            
+            <!-- No Preview State -->
+            <div *ngIf="!getPreviewImage(app) && !isLoadingPreview(app.id)" 
+                 class="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50">
+              <div class="text-center text-gray-500">
+                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <p class="text-xs">No preview available</p>
+                <button (click)="fetchAppPreview(app, true)" 
+                        [disabled]="isLoadingPreview(app.id)"
+                        class="mt-2 px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  {{ isLoadingPreview(app.id) ? 'Loading...' : 'Load Preview' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="mb-4">
+          <div class="flex flex-wrap gap-1.5">
+            <span *ngFor="let tech of app.techStack" 
+                  class="px-2 py-1 bg-white/50 text-gray-700 text-xs rounded-full border border-gray-200">
+              {{ tech }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="mb-4" *ngIf="app.tags.length > 0">
+          <div class="flex flex-wrap gap-1.5">
+            <span *ngFor="let tag of app.tags" 
+                  class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-lg border border-purple-200">
+              #{{ tag }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <a [href]="app.deployedUrl" target="_blank" 
+               class="inline-flex items-center px-3 py-1.5 btn-gradient hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm">
+              <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+              View
+            </a>
+            
+            <button (click)="showProjectDetails(app)" 
+                    class="inline-flex items-center px-2 py-1.5 btn-glass hover:shadow-lg transition-all duration-300 text-blue-600 hover:text-blue-700"
+                    title="View project details">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </button>
+            
+            <button (click)="refreshAppPreview(app.id)" 
+                    class="inline-flex items-center px-2 py-1.5 btn-glass hover:shadow-lg transition-all duration-300"
+                    title="Refresh preview">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </button>
+            
+            <button (click)="deleteApp(app.id)" 
+                    class="inline-flex items-center px-2 py-1.5 btn-glass hover:shadow-lg transition-all duration-300 text-red-600 hover:text-red-700"
+                    title="Delete project">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="text-gray-500 text-xs">
+            {{ app.updatedAt | date:'MMM d, y' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- List View -->
+    <div class="space-y-6" *ngIf="viewMode === 'list'">
+      <div *ngFor="let app of filteredApps; let i = index" 
+           class="card-glass hover-lift"
+           [style.animation-delay]="(i * 0.1) + 's'"
+           [class]="'slide-in-up'"
+           [attr.data-app-id]="app.id">
+        
+        <div class="flex items-start gap-4">
+          <!-- Preview Image -->
+          <div class="flex-shrink-0 w-32 h-24 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+            <!-- Preview Image -->
+            <img *ngIf="getPreviewImage(app) && !isLoadingPreview(app.id)" 
+                 [src]="getPreviewImage(app)" 
+                 [alt]="app.name + ' preview'"
+                 class="w-full h-full object-cover"
+                 (error)="onImageError($event)">
+            
+            <!-- Loading State -->
+            <div *ngIf="isLoadingPreview(app.id)" 
+                 class="w-full h-full flex items-center justify-center bg-gray-50">
+              <div class="flex flex-col items-center text-gray-500">
+                <svg class="w-4 h-4 animate-spin mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span class="text-xs">Loading...</span>
+              </div>
+            </div>
+            
+            <!-- No Preview State -->
+            <div *ngIf="!getPreviewImage(app) && !isLoadingPreview(app.id)" 
+                 class="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50">
+              <div class="text-center text-gray-500">
+                <svg class="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <button (click)="fetchAppPreview(app)" 
+                        class="mt-1 px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors">
+                  Load
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- App Details -->
+          <div class="flex-1">
+            <div class="flex items-center gap-4 mb-3">
+              <h3 class="text-xl font-bold text-gray-800 group-hover:text-purple-600 transition-colors">{{ app.name }}</h3>
+              <span [class]="'px-3 py-1 rounded-full text-xs font-semibold ' + getStatusColor(app.status)">
+                {{ app.status }}
+              </span>
+            </div>
+            <p class="text-gray-600 mb-3">{{ app.description }}</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span *ngFor="let tech of app.techStack" 
+                    class="px-3 py-1 bg-white/50 text-gray-700 text-sm rounded-full border border-gray-200">
+                {{ tech }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4">
+            <div class="text-gray-500 text-sm">
+              {{ app.updatedAt | date:'MMM d, y' }}
+            </div>
+            <a [href]="app.deployedUrl" target="_blank" 
+               class="inline-flex items-center px-4 py-2 btn-gradient hover:shadow-lg transition-all duration-300">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+              View
+            </a>
+            <button (click)="showProjectDetails(app)" 
+                    class="inline-flex items-center px-2 py-1.5 btn-glass hover:shadow-lg transition-all duration-300 text-blue-600 hover:text-blue-700"
+                    title="View project details">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </button>
+            <button (click)="deleteApp(app.id)" 
+                    class="inline-flex items-center px-2 py-1.5 btn-glass hover:shadow-lg transition-all duration-300 text-red-600 hover:text-red-700"
+                    title="Delete project">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredApps.length === 0" class="text-center py-16">
+      <div class="card-glass">
+        <div class="w-24 h-24 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 animate-pulse">
+          <svg class="w-12 h-12 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">No Projects Found</h3>
+        <p class="text-gray-600 mb-8">Try adjusting your search criteria or add a new project to get started.</p>
+        <a routerLink="/add-app" 
+           class="inline-flex items-center px-8 py-4 btn-gradient hover:shadow-lg transform hover:-translate-y-1 hover:scale-105 transition-all duration-300">
+          <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          Add Your First Project
+        </a>
+      </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-16">
+      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <!-- Gradient Border Effect -->
+        <div class="h-2 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div>
+        
+        <div class="p-8 md:p-12">
+          <div class="mb-6">
+            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+            </div>
+          </div>
+          
+          <h2 class="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-purple-600 via-violet-500 to-pink-500 bg-clip-text text-transparent drop-shadow-sm">
+            Ready to Showcase Your Work?
+          </h2>
+          <p class="text-lg md:text-xl text-gray-600 font-medium max-w-2xl mx-auto leading-relaxed mb-8">
+            Add your latest projects and let your portfolio speak for itself
+          </p>
+          
+          <a routerLink="/add-app" 
+             class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-400 text-white font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300 text-lg">
+            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Add New Project
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Details Popover -->
+  <div *ngIf="selectedProject" 
+       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+       (click)="closeProjectDetails()">
+    <div class="relative max-w-2xl w-full mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden"
+         (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-bold mb-2">{{ selectedProject.name }}</h2>
+            <p class="text-purple-100">{{ selectedProject.description }}</p>
+          </div>
+          <button (click)="closeProjectDetails()" 
+                  class="text-white/80 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 space-y-6">
+        <!-- Basic Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-semibold text-gray-600 mb-1">Status</label>
+            <span [class]="'px-3 py-1 rounded-full text-sm font-medium ' + getStatusColor(selectedProject.status)">
+              {{ selectedProject.status }}
+            </span>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-600 mb-1">Created</label>
+            <p class="text-gray-800">{{ selectedProject.createdAt | date:'MMM d, y' }}</p>
+          </div>
+        </div>
+
+        <!-- URLs -->
+        <div class="space-y-3">
+          <div>
+            <label class="text-sm font-semibold text-gray-600 mb-1">Deployed URL</label>
+            <a [href]="selectedProject.deployedUrl" target="_blank" 
+               class="text-blue-600 hover:text-blue-800 break-all">{{ selectedProject.deployedUrl }}</a>
+          </div>
+          <div *ngIf="selectedProject.repositoryUrl">
+            <label class="text-sm font-semibold text-gray-600 mb-1">Repository URL</label>
+            <a [href]="selectedProject.repositoryUrl" target="_blank" 
+               class="text-blue-600 hover:text-blue-800 break-all">{{ selectedProject.repositoryUrl }}</a>
+          </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div *ngIf="selectedProject.techStack.length > 0">
+          <label class="text-sm font-semibold text-gray-600 mb-2">Tech Stack</label>
+          <div class="flex flex-wrap gap-2">
+            <span *ngFor="let tech of selectedProject.techStack" 
+                  class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+              {{ tech }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div *ngIf="selectedProject.tags.length > 0">
+          <label class="text-sm font-semibold text-gray-600 mb-2">Tags</label>
+          <div class="flex flex-wrap gap-2">
+            <span *ngFor="let tag of selectedProject.tags" 
+                  class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+              #{{ tag }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div *ngIf="selectedProject.features && selectedProject.features.length > 0">
+          <label class="text-sm font-semibold text-gray-600 mb-2">Key Features</label>
+          <ul class="list-disc list-inside space-y-1">
+            <li *ngFor="let feature of selectedProject.features" class="text-gray-700">{{ feature }}</li>
+          </ul>
+        </div>
+
+        <!-- Challenges -->
+        <div *ngIf="selectedProject.challenges && selectedProject.challenges.length > 0">
+          <label class="text-sm font-semibold text-gray-600 mb-2">Challenges Faced</label>
+          <ul class="list-disc list-inside space-y-1">
+            <li *ngFor="let challenge of selectedProject.challenges" class="text-gray-700">{{ challenge }}</li>
+          </ul>
+        </div>
+
+        <!-- Learnings -->
+        <div *ngIf="selectedProject.learnings && selectedProject.learnings.length > 0">
+          <label class="text-sm font-semibold text-gray-600 mb-2">Learnings & Takeaways</label>
+          <ul class="list-disc list-inside space-y-1">
+            <li *ngFor="let learning of selectedProject.learnings" class="text-gray-700">{{ learning }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3">
+        <button (click)="closeProjectDetails()" 
+                class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+          Close
+        </button>
+        <a [href]="selectedProject.deployedUrl" target="_blank"
+           class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:shadow-lg transition-all duration-300">
+          View Project
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

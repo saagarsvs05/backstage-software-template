@@ -1,0 +1,56 @@
+<!-- Clean Glassmorphism Navigation -->
+<nav class="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/20 shadow-lg">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <div class="flex items-center space-x-3">
+        <a routerLink="/dashboard" class="flex items-center space-x-3 group">
+          <div class="flex items-center">
+            <img src="/launchpad-logo-text.png" 
+                 alt="LaunchPad Logo" 
+                 class="h-14 w-auto group-hover:scale-105 transition-all duration-300">
+          </div>
+        </a>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="hidden md:flex items-center space-x-2">
+        <a routerLink="/dashboard" 
+           routerLinkActive="bg-white/50 text-purple-600 border-purple-200" 
+           [routerLinkActiveOptions]="{exact: true}"
+           class="flex items-center px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-white/50 transition-all duration-300 font-medium text-sm border border-transparent hover:border-purple-200 hover:shadow-lg">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+          </svg>
+          Portfolio
+        </a>
+      </div>
+
+      <!-- Add App Button -->
+      <div class="flex items-center space-x-2">
+        <a routerLink="/add-app" 
+           class="inline-flex items-center px-4 py-2 btn-gradient hover:shadow-lg transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 text-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          <span class="hidden sm:inline">Add Project</span>
+        </a>
+        
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-white/50 transition-all duration-300 border border-gray-200 hover:border-purple-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="min-h-screen pt-16">
+  <app-theme-provider>
+    <router-outlet></router-outlet>
+  </app-theme-provider>
+</main>

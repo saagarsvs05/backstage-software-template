@@ -1,0 +1,368 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+  <div class="container mx-auto px-6 py-12">
+    <!-- Header Section -->
+    <div class="text-center mb-12 slide-in-up">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl mb-6 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-110 hover:rotate-3">
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+      </div>
+      <h1 class="text-3xl md:text-3xl font-black gradient-text-purple mb-6">
+        {{ isEdit ? 'Edit Project' : 'Add New Project' }}
+      </h1>
+      <p class="text-xl text-gray-600 font-medium max-w-2xl mx-auto">
+        {{ isEdit ? 'Update your project details and showcase your work' : 'Showcase your latest creation and share it with the world' }}
+      </p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="max-w-4xl mx-auto mb-8 card-glass border-l-4 border-red-500 bg-red-50">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-red-700 font-medium">{{ error }}</span>
+        </div>
+        <button (click)="clearError()" class="text-red-500 hover:text-red-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-16">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-4 animate-pulse">
+        <svg class="w-8 h-8 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+      </div>
+      <p class="text-gray-600 font-medium">{{ isEdit ? 'Loading project details...' : 'Preparing form...' }}</p>
+    </div>
+
+    <!-- Form Container -->
+    <div class="max-w-4xl mx-auto" *ngIf="!loading">
+      <div class="card-glass">
+        <form (ngSubmit)="onSubmit()" class="space-y-8">
+          
+          <!-- Basic Information Section -->
+          <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+              <svg class="w-6 h-6 mr-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Basic Information
+            </h2>
+            
+            <!-- Project Name -->
+            <div>
+              <label class="block text-gray-700 font-semibold mb-3">Project Name *</label>
+              <input 
+                type="text" 
+                [(ngModel)]="formData.name"
+                name="name"
+                required
+                placeholder="Enter your project name"
+                class="w-full px-6 py-4 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label class="block text-gray-700 font-semibold mb-3">Description *</label>
+              <textarea 
+                [(ngModel)]="formData.description"
+                name="description"
+                required
+                rows="4"
+                placeholder="Describe your project, its purpose, and what makes it special"
+                class="w-full px-6 py-4 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300 resize-none"></textarea>
+            </div>
+
+            <!-- URLs -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-gray-700 font-semibold mb-3">Deployed URL *</label>
+                <input 
+                  type="url" 
+                  [(ngModel)]="formData.deployedUrl"
+                  name="deployedUrl"
+                  required
+                  placeholder="https://your-project.com"
+                  class="w-full px-6 py-4 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+              </div>
+              <div>
+                <label class="block text-gray-700 font-semibold mb-3">Repository URL</label>
+                <input 
+                  type="url" 
+                  [(ngModel)]="formData.repositoryUrl"
+                  name="repositoryUrl"
+                  placeholder="https://github.com/username/repo"
+                  class="w-full px-6 py-4 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div>
+              <label class="block text-gray-700 font-semibold mb-3">Project Status *</label>
+              <select 
+                [(ngModel)]="formData.status"
+                name="status"
+                required
+                class="w-full px-6 py-4 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+                <option value="active" class="bg-white text-gray-800">Active</option>
+                <option value="in-progress" class="bg-white text-gray-800">In Progress</option>
+                <option value="archived" class="bg-white text-gray-800">Archived</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Technology Stack Section -->
+          <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+              <svg class="w-6 h-6 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+              </svg>
+              Technology Stack
+            </h2>
+            
+            <div>
+              <label class="block text-gray-700 font-semibold mb-3">Technologies Used</label>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span *ngFor="let tech of formData.techStack; let i = index" 
+                      class="inline-flex items-center px-4 py-2 bg-white/50 text-gray-700 rounded-xl border border-gray-200 hover:bg-white/70 transition-all duration-300">
+                  {{ tech }}
+                  <button 
+                    type="button"
+                    (click)="removeTechStack(i)"
+                    class="ml-2 text-gray-500 hover:text-gray-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </span>
+              </div>
+              <div class="flex gap-2">
+                <input 
+                  type="text" 
+                  [(ngModel)]="newTechStack"
+                  name="newTechStack"
+                  placeholder="Add technology (e.g., React, Node.js, Python)"
+                  (keydown.enter)="addTechStack()"
+                  class="flex-1 px-4 py-2 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+                <button 
+                  type="button"
+                  (click)="addTechStack()"
+                  class="px-3 py-2 btn-gradient hover:shadow-lg transition-all duration-300 text-sm">
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tags Section -->
+          <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+              <svg class="w-6 h-6 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+              </svg>
+              Tags & Categories
+            </h2>
+            
+            <div>
+              <label class="block text-gray-700 font-semibold mb-3">Project Tags</label>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span *ngFor="let tag of formData.tags; let i = index" 
+                      class="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-xl border border-green-200 hover:bg-green-200 transition-all duration-300">
+                  #{{ tag }}
+                  <button 
+                    type="button"
+                    (click)="removeTag(i)"
+                    class="ml-2 text-green-600 hover:text-green-800 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </span>
+              </div>
+              <div class="flex gap-2">
+                <input 
+                  type="text" 
+                  [(ngModel)]="newTag"
+                  name="newTag"
+                  placeholder="Add tag (e.g., web-app, mobile, ai)"
+                  (keydown.enter)="addTag()"
+                  class="flex-1 px-4 py-2 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+                <button 
+                  type="button"
+                  (click)="addTag()"
+                  class="px-3 py-2 btn-gradient hover:shadow-lg transition-all duration-300 text-sm">
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Features Section -->
+          <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+              <svg class="w-6 h-6 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Key Features
+            </h2>
+            
+            <div>
+              <label class="block text-gray-700 font-semibold mb-3">Project Features</label>
+              <div class="space-y-3 mb-4">
+                <div *ngFor="let feature of formData.features; let i = index" 
+                     class="flex items-center gap-3 p-4 bg-white/50 rounded-xl border border-gray-200 hover:bg-white/70 transition-all duration-300">
+                  <span class="text-gray-700">{{ feature }}</span>
+                  <button 
+                    type="button"
+                    (click)="removeFeature(i)"
+                    class="ml-auto text-gray-500 hover:text-gray-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <input 
+                  type="text" 
+                  [(ngModel)]="newFeature"
+                  name="newFeature"
+                  placeholder="Add a key feature of your project"
+                  (keydown.enter)="addFeature()"
+                  class="flex-1 px-4 py-2 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+                <button 
+                  type="button"
+                  (click)="addFeature()"
+                  class="px-3 py-2 btn-gradient hover:shadow-lg transition-all duration-300 text-sm">
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Challenges & Learnings Section -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Challenges -->
+            <div class="space-y-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+                Challenges
+              </h2>
+              
+              <div>
+                <label class="block text-gray-700 font-semibold mb-3">Technical Challenges</label>
+                <div class="space-y-3 mb-4">
+                  <div *ngFor="let challenge of formData.challenges; let i = index" 
+                       class="flex items-center gap-3 p-4 bg-white/50 rounded-xl border border-gray-200 hover:bg-white/70 transition-all duration-300">
+                    <span class="text-gray-700">{{ challenge }}</span>
+                    <button 
+                      type="button"
+                      (click)="removeChallenge(i)"
+                      class="ml-auto text-gray-500 hover:text-gray-700 transition-colors">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex gap-2">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="newChallenge"
+                    name="newChallenge"
+                    placeholder="Describe a challenge you overcame"
+                    (keydown.enter)="addChallenge()"
+                    class="flex-1 px-4 py-2 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+                  <button 
+                    type="button"
+                    (click)="addChallenge()"
+                    class="px-3 py-2 btn-gradient hover:shadow-lg transition-all duration-300 text-sm">
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Learnings -->
+            <div class="space-y-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                Learnings
+              </h2>
+              
+              <div>
+                <label class="block text-gray-700 font-semibold mb-3">Key Learnings</label>
+                <div class="space-y-3 mb-4">
+                  <div *ngFor="let learning of formData.learnings; let i = index" 
+                       class="flex items-center gap-3 p-4 bg-white/50 rounded-xl border border-gray-200 hover:bg-white/70 transition-all duration-300">
+                    <span class="text-gray-700">{{ learning }}</span>
+                    <button 
+                      type="button"
+                      (click)="removeLearning(i)"
+                      class="ml-auto text-gray-500 hover:text-gray-700 transition-colors">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex gap-2">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="newLearning"
+                    name="newLearning"
+                    placeholder="What did you learn from this project?"
+                    (keydown.enter)="addLearning()"
+                    class="flex-1 px-4 py-2 input-glass focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300">
+                  <button 
+                    type="button"
+                    (click)="addLearning()"
+                    class="px-3 py-2 btn-gradient hover:shadow-lg transition-all duration-300 text-sm">
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex flex-col sm:flex-row gap-4 pt-8">
+            <button 
+              type="submit"
+              [disabled]="loading"
+              class="flex-1 inline-flex items-center justify-center px-8 py-4 btn-gradient hover:shadow-lg transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+              <svg *ngIf="!loading" class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <svg *ngIf="loading" class="w-6 h-6 mr-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              {{ loading ? (isEdit ? 'Updating...' : 'Creating...') : (isEdit ? 'Update Project' : 'Create Project') }}
+            </button>
+            
+            <button 
+              type="button"
+              (click)="onCancel()"
+              class="flex-1 inline-flex items-center justify-center px-8 py-4 btn-glass hover:shadow-lg transition-all duration-300">
+              <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

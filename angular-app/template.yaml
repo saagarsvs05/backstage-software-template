@@ -1,0 +1,80 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: angular-app-template
+  title: angular-app-template
+  description: Create a simple new Angular application
+spec:
+  owner: development
+  type: service
+  parameters:
+    - title: App Information
+      required:
+        - component_id
+        - environment
+      properties:
+        component_id:
+          title: Component name
+          type: string
+          description: Unique name of the component
+          pattern: '^([a-zA-Z][a-zA-Z0-9-]*)(-[a-zA-Z0-9]+)*$'
+        environment:
+          title: Environment
+          type: string
+          description: The environment the component will be deployed to
+          enum:
+            - dev
+            - qa            
+            - prod
+    # - title: Choose a Location
+    #   required:
+    #     - host
+    #     - owner
+    #     - repo
+    #   properties:
+    #     host:
+    #       title: Git Host
+    #       type: string
+    #       default: github.com
+    #       enum:
+    #           - github.com
+    #     owner:
+    #       title: Owner Name
+    #       type: string
+    #       default: saagarsvs007
+    #       description: Name of the user or organization that will own the repository
+    #     repo:
+    #       title: Repository Name
+    #       type: string
+    #       description: Name of the repository to be created
+  steps:
+    - id: fetch
+      name: Fetch Skeleton
+      action: fetch:template
+      input:
+        url: ./template
+        values:
+          app_name: ${{ parameters.component_id }}
+          app_env: ${{ parameters.environment }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts:
+          - github.com
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.component_id }}
+        description: Node.js service scaffolded from Backstage
+        defaultBranch: 'main'
+        repoVisibility: public
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+  # some outputs which are saved along with the job for use in the frontend
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps['publish'].output.remoteUrl }}
+

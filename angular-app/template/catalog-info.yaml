@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{values.app_name}}
+  description: Angular app created using Backstage
+  annotations:
+    github.com/project-slug: saagarsvs05/${{values.app_name}}
+spec:
+  type: service
+  lifecycle: experimental
+  owner: development  
