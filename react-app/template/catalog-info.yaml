@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{values.name}}
+  name: ${{values.app_name}}
   description: A React frontend app scaffolded from Backstage
   tags:
     - react
