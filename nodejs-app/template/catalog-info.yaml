@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{ values.app_name }}
+  name: ${{values.app_name}}
   description: A Node.js REST API scaffolded from Backstage
   tags:
     - nodejs
