@@ -60,8 +60,6 @@ spec:
       name: Publish to GitHub
       action: publish:github
       input:
-        allowedHosts:
-          - github.com
         repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.component_id }}
         description: Node.js service scaffolded from Backstage
         defaultBranch: 'main'
