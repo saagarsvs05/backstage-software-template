@@ -1,5 +1,5 @@
 # Stage 1: Build the app
-FROM node:20 AS builder
+FROM node:20-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm install -g @angular/cli && npm install
