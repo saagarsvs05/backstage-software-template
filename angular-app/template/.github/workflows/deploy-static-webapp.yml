@@ -24,6 +24,8 @@ jobs:
           check-latest: true
       - run: npm install
       - run: npm run build --if-present
+      - name: List files in build directory
+        run: ls -l dist/techhub-app/browser
       
       - name: Show Node version
         run: node --version
