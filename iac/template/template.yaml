@@ -1,7 +1,7 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: iac
+  name: azure-terraform-app
   title: Azure App via Terraform
 spec:
   owner: development
