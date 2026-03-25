@@ -3,6 +3,8 @@ kind: Component
 metadata:
   name: ${{ values.app_name }}
   description: Terraform infrastructure for Azure deployment
+  annotations:
+    github.com/project-slug: saagarsvs05/${{values.app_name}}
   tags:
     - terraform
     - iac
