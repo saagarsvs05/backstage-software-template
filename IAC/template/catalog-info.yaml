@@ -1,10 +1,10 @@
 # apiVersion: backstage.io/v1alpha1
 # kind: Component
 # metadata:
-#   name: ${{values.app_name}}
+#   name: ${{ values.app_name }}
 #   description: Terraform infrastructure for Azure deployment
 #   annotations:
-#     github.com/project-slug: saagarsvs05/${{values.app_name}}
+#     github.com/project-slug: saagarsvs05/${{ values.app_name }}
 #   tags:
 #     - terraform
 #     - iac
@@ -19,10 +19,10 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{values.app_name}}
+  name: ${{ values.app_name }}
   description: IAC created using Backstage
   annotations:
-    github.com/project-slug: saagarsvs05/${{values.app_name}}
+    github.com/project-slug: saagarsvs05/${{ values.app_name }}
 spec:
   type: service
   lifecycle: experimental
