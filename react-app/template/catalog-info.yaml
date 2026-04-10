@@ -3,6 +3,8 @@ kind: Component
 metadata:
   name: ${{values.app_name}}
   description: A React frontend app scaffolded from Backstage
+  annotations:
+    github.com/project-slug: org/repo
   tags:
     - react
 spec:
