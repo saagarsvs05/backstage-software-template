@@ -1,0 +1,105 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: nodejs-aks-deployment
+  title: Deploy Node.js App to AKS
+  description: Deploy a Node.js application to Azure Kubernetes Service with custom namespace and port
+  tags:
+    - nodejs
+    - aks
+    - kubernetes
+    - azure
+spec:
+  owner: platform-team
+  type: service
+  
+  parameters:
+    - title: Application Details
+      required:
+        - name
+        - description
+      properties:
+        name:
+          title: Application Name
+          type: string
+          description: Unique name for your application (lowercase, alphanumeric, hyphens only)
+          pattern: '^[a-z0-9-]+'
+
+    - title: Container Configuration
+      required:
+        - dockerImage
+      properties:
+        dockerImage:
+          title: Docker Image
+          type: string
+          description: Docker image for your Node.js application
+          default: 'node:18-alpine'
+        acrName:
+          title: Azure Container Registry Name
+          type: string
+          description: Your ACR name (without .azurecr.io)
+          ui:help: 'Leave empty to use Docker Hub image'
+
+    - title: GitHub Repository
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+            allowedOwners:
+              - your-github-org
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          namespace: ${{ parameters.namespace }}
+          applicationPort: ${{ parameters.applicationPort }}
+          servicePort: ${{ parameters.servicePort }}
+          replicas: ${{ parameters.replicas }}
+          dockerImage: ${{ parameters.dockerImage }}
+          acrName: ${{ parameters.acrName }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: ${{ parameters.description }}
+        repoUrl: ${{ parameters.repoUrl }}
+        defaultBranch: main
+        repoVisibility: public
+        deleteBranchOnMerge: true
+
+    - id: register
+      name: Register Component
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+    - id: create-aks-secret
+      name: Create AKS Secrets
+      action: debug:log
+      input:
+        message: 'Remember to add AKS credentials as GitHub secrets: AZURE_CREDENTIALS, AKS_CLUSTER_NAME, AKS_RESOURCE_GROUP'
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
