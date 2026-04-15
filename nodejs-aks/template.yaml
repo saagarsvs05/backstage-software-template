@@ -17,13 +17,21 @@ spec:
     - title: Application Details
       required:
         - name
-        - description
+        - environment
       properties:
         name:
           title: Application Name
           type: string
           description: Unique name for your application (lowercase, alphanumeric, hyphens only)
           pattern: '^[a-z0-9-]+'
+        environment:
+          title: Environment
+          type: string
+          description: The environment the component will be deployed to
+          enum:
+            - dev
+            - qa            
+            - prod
 
     - title: Container Configuration
       required:
