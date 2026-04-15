@@ -41,26 +41,48 @@ spec:
           title: Docker Image
           type: string
           description: Docker image for your Node.js application
-          default: 'node:18-alpine'
+          default: 'node:22-alpine'
         acrName:
           title: Azure Container Registry Name
           type: string
           description: Your ACR name (without .azurecr.io)
           ui:help: 'Leave empty to use Docker Hub image'
 
-    - title: GitHub Repository
+    - title: Choose a Location
       required:
-        - repoUrl
+        - host
+        - owner
+        - repo
       properties:
-        repoUrl:
-          title: Repository Location
+        host:
+          title: Git Host
           type: string
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
+          default: github.com
+          enum:
               - github.com
-            allowedOwners:
-              - your-github-org
+        owner:
+          title: Owner Name
+          type: string
+          default: saagarsvs007
+          description: Name of the user or organization that will own the repository
+        repo:
+          title: Repository Name
+          type: string
+          description: Name of the repository to be created
+
+    # - title: GitHub Repository
+    #   required:
+    #     - repoUrl
+    #   properties:
+    #     repoUrl:
+    #       title: Repository Location
+    #       type: string
+    #       ui:field: RepoUrlPicker
+    #       ui:options:
+    #         allowedHosts:
+    #           - github.com
+    #         allowedOwners:
+    #           - your-github-org
 
   steps:
     - id: fetch-base
