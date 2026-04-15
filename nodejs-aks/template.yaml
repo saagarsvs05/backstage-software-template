@@ -82,7 +82,7 @@ spec:
     #         allowedHosts:
     #           - github.com
     #         allowedOwners:
-    #           - your-github-org
+    #           - saagarsvs007
 
   steps:
     - id: fetch-base
@@ -106,9 +106,9 @@ spec:
       name: Publish to GitHub
       action: publish:github
       input:
-        allowedHosts: ['github.com']
-        description: ${{ parameters.description }}
-        repoUrl: ${{ parameters.repoUrl }}
+        # allowedHosts: ['github.com']
+        description: Node.js aks service scaffolded from Backstage
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.repo }}
         defaultBranch: main
         repoVisibility: public
         deleteBranchOnMerge: true
