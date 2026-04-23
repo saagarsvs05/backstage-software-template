@@ -71,7 +71,7 @@ spec:
     spec:
       containers:
         - name: ${{ values.app_name }}
-          image: ${{ values.acr_name }}.azurecr.io/${{ values.app_name }}:latest
-          # image: "${{ '${{ secrets.ACR_NAME }}' }}.azurecr.io/${{ values.app_name }}:latest"
+          # image: ${{ values.acr_name }}.azurecr.io/${{ values.app_name }}:latest
+          image: ${{ secrets.ACR_NAME }}.azurecr.io/${{ values.app_name }}:latest
           ports:
             - containerPort: 3000
