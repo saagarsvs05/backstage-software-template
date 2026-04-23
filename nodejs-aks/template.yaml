@@ -78,6 +78,7 @@ spec:
       input:
         repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.repo }}
         defaultBranch: main
+        repoVisibility: public
 
     - id: register
       name: Register in Backstage
