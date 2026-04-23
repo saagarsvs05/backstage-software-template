@@ -70,6 +70,16 @@ spec:
           type: string
           description: Name of the repository to be created
 
+    - title: Kubernetes Configuration
+      required:
+        - namespace
+      properties:
+        namespace:
+          title: Kubernetes Namespace
+          type: string
+          description: Namespace where the app will be deployed
+          pattern: '^[a-z0-9-]+$'
+
     # - title: GitHub Repository
     #   required:
     #     - repoUrl
@@ -89,7 +99,7 @@ spec:
       name: Fetch Base Template
       action: fetch:template
       input:
-        url: ./skeleton
+        url: ./template
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
