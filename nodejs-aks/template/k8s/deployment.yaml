@@ -72,6 +72,6 @@ spec:
       containers:
         - name: ${{ values.app_name }}
           # image: ${{ values.docker_image }}
-          image: "${{ '${{ secrets.ACR_NAME }}' }}.azurecr.io/${{ values.app_name }}:${{ steps.vars.outputs.SHORT_SHA }}"
+          image: "${{ '${{ secrets.ACR_NAME }}' }}.azurecr.io/${{ values.app_name }}:latest"
           ports:
-            - containerPort: 80
+            - containerPort: 3000
