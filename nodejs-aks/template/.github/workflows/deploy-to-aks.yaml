@@ -31,8 +31,8 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/${{ values.app_name }}:${{ steps.vars.outputs.SHORT_SHA }} .
-          docker push ${{ secrets.ACR_NAME }}.azurecr.io/${{ values.app_name }}:${{ steps.vars.outputs.SHORT_SHA }}
+          docker build -t ${{ '${{ secrets.ACR_NAME }}' }}.azurecr.io/${{ values.app_name }}:${{ steps.vars.outputs.SHORT_SHA }} .
+          docker push ${{ '${{ secrets.ACR_NAME }}' }}.azurecr.io/${{ values.app_name }}:${{ steps.vars.outputs.SHORT_SHA }}
       
       - name: Set AKS Context
         uses: azure/aks-set-context@v3
