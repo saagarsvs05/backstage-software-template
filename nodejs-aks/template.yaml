@@ -1,78 +1,180 @@
+# apiVersion: scaffolder.backstage.io/v1beta3
+# kind: Template
+# metadata:
+#   name: nodejs-aks-deployment
+#   title: Deploy Node.js App to AKS
+
+# spec:
+#   owner: development
+#   type: service
+
+#   parameters:
+#     - title: Application Details
+#       required:
+#         - name
+#         - environment
+#       properties:
+#         name:
+#           type: string
+#           pattern: '^[a-z0-9-]+'
+#         environment:
+#           type: string
+#           enum: [dev, qa, prod]
+
+#     - title: Container Configuration
+#       required:
+#         - dockerImage
+#       properties:
+#         dockerImage:
+#           type: string
+#           default: 'node:22-alpine'
+#         acrName:
+#           type: string
+
+#     - title: GitHub Location
+#       required:
+#         - owner
+#         - repo
+#       properties:
+#         owner:
+#           type: string
+#           default: saagarsvs007
+#         repo:
+#           type: string
+
+#     - title: Kubernetes Configuration
+#       required:
+#         - namespace
+#       properties:
+#         namespace:
+#           type: string
+#           pattern: '^[a-z0-9-]+$'
+
+#   steps:
+#     - id: fetch-base
+#       name: Fetch Base Template
+#       action: fetch:template
+#       input:
+#         url: ./template
+#         values:
+#           name: ${{ parameters.name }}
+#           owner: ${{ parameters.owner }}
+#           namespace: ${{ parameters.namespace }}
+#           dockerImage: ${{ parameters.dockerImage }}
+#           acrName: ${{ parameters.acrName }}
+
+#     - id: publish
+#       name: Publish to GitHub
+#       action: publish:github
+#       input:
+#         repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.repo }}
+#         description: Node.js AKS service scaffolded from Backstage
+#         defaultBranch: main
+
+#     - id: register
+#       name: Register Component
+#       action: catalog:register
+#       input:
+#         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+#         catalogInfoPath: '/catalog-info.yaml'
+
+#   output:
+#     links:
+#       - title: Repository
+#         url: ${{ steps.publish.output.remoteUrl }}
+
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: nodejs-aks-deployment
-  title: Deploy Node.js App to AKS
-
+  name: aks-nodejs-template
+  title: AKS Node.js Deployment
+  description: Create and deploy a Node.js app to AKS
 spec:
-  owner: platform-team
+  owner: development
   type: service
 
   parameters:
-    - title: Application Details
+    - title: App Information
       required:
-        - name
+        - component_id
         - environment
       properties:
-        name:
+        component_id:
+          title: Application Name
           type: string
-          pattern: '^[a-z0-9-]+'
+          pattern: '^[a-z0-9-]+$'
         environment:
+          title: Environment
           type: string
-          enum: [dev, qa, prod]
+          enum:
+            - dev
+            - qa
+            - prod
 
     - title: Container Configuration
       required:
-        - dockerImage
+        - docker_image
       properties:
-        dockerImage:
+        docker_image:
+          title: Docker Image
           type: string
-          default: 'node:22-alpine'
-        acrName:
+          default: node:22-alpine
+        acr_name:
+          title: ACR Name
           type: string
-
-    - title: GitHub Location
-      required:
-        - owner
-        - repo
-      properties:
-        owner:
-          type: string
-          default: saagarsvs007
-        repo:
-          type: string
+          description: Azure Container Registry name (optional)
 
     - title: Kubernetes Configuration
       required:
         - namespace
       properties:
         namespace:
+          title: Namespace
           type: string
           pattern: '^[a-z0-9-]+$'
 
+    - title: Choose a Location
+      required:
+        - host
+        - owner
+        - repo
+      properties:
+        host:
+          type: string
+          default: github.com
+          enum:
+            - github.com
+        owner:
+          type: string
+          default: saagarsvs007
+        repo:
+          type: string
+
   steps:
-    - id: fetch-base
-      name: Fetch Base Template
+    - id: fetch
+      name: Fetch Skeleton
       action: fetch:template
       input:
         url: ./template
         values:
-          name: ${{ parameters.name }}
-          owner: ${{ parameters.owner }}
+          app_name: ${{ parameters.component_id }}
+          app_env: ${{ parameters.environment }}
           namespace: ${{ parameters.namespace }}
-          dockerImage: ${{ parameters.dockerImage }}
-          acrName: ${{ parameters.acrName }}
+          docker_image: ${{ parameters.docker_image }}
+          acr_name: ${{ parameters.acr_name }}
+          owner: ${{ parameters.owner }}
 
     - id: publish
       name: Publish to GitHub
       action: publish:github
       input:
-        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.repo }}
-        description: Node.js AKS service scaffolded from Backstage
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.component_id }}
+        description: AKS Node.js service scaffolded from Backstage
         defaultBranch: main
+        repoVisibility: public
 
     - id: register
-      name: Register Component
+      name: Register in Backstage
       action: catalog:register
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}

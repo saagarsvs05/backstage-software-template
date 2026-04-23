@@ -87,99 +87,127 @@
 #         echo "Service details:"
 #         kubectl describe service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }}
 
+# name: Deploy to AKS
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+# env:
+#   APP_NAME: ${{ values.name }}
+#   NAMESPACE: ${{ values.namespace }}
+#   {%- if values.acrName %}
+#   ACR_NAME: ${{ values.acrName }}
+#   IMAGE_NAME: ${{ values.acrName }}.azurecr.io/${{ values.name }}
+#   {%- else %}
+#   IMAGE_NAME: ${{ values.dockerImage }}
+#   {%- endif %}
+
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v3
+
+#     - name: Azure Login
+#       uses: azure/login@v1
+#       with:
+#         # creds: ${{ secrets.AZURE_CREDENTIALS }}
+#         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+#         client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+#     {%- if values.acrName %}
+#     - name: Login to Azure Container Registry
+#       run: |
+#         az acr login --name ${{ env.ACR_NAME }}
+
+#     - name: Build and Push Docker Image
+#       run: |
+#         docker build -t ${{ env.IMAGE_NAME }}:latest .
+#         docker push ${{ env.IMAGE_NAME }}:latest
+#     {%- endif %}
+
+#     - name: Set AKS Context
+#       uses: azure/aks-set-context@v3
+#       with:
+#         resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
+#         cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
+
+#     - name: Create Namespace
+#       run: |
+#         kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+#         echo "Namespace ${{ env.NAMESPACE }} created or already exists"
+
+#     - name: Apply Namespace Configuration
+#       run: |
+#         kubectl apply -f k8s/namespace.yaml
+
+#     - name: Deploy Application to AKS
+#       run: |
+#         kubectl apply -f k8s/deployment.yaml -n ${{ env.NAMESPACE }}
+#         kubectl apply -f k8s/service.yaml -n ${{ env.NAMESPACE }}
+
+#     - name: Wait for Deployment
+#       run: |
+#         kubectl rollout status deployment/${{ env.APP_NAME }} -n ${{ env.NAMESPACE }} --timeout=5m
+
+#     - name: Get Service Details
+#       run: |
+#         echo "Waiting for service to be ready..."
+#         sleep 10
+#         kubectl get service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }}
+        
+#         EXTERNAL_IP=$(kubectl get service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+#         SERVICE_PORT=$(kubectl get service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }} -o jsonpath='{.spec.ports[0].port}')
+        
+#         if [ -z "$EXTERNAL_IP" ]; then
+#           echo "Warning: External IP not assigned yet. It may take a few minutes."
+#           echo "Run 'kubectl get service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }}' to check status"
+#         else
+#           echo "================================"
+#           echo "Application deployed successfully!"
+#           echo "Access your application at: http://$EXTERNAL_IP:$SERVICE_PORT"
+#           echo "Namespace: ${{ env.NAMESPACE }}"
+#           echo "================================"
+#         fi
+
+#     - name: Show Deployment Status
+#       run: |
+#         echo "Pods in namespace ${{ env.NAMESPACE }}:"
+#         kubectl get pods -n ${{ env.NAMESPACE }} -l app=${{ env.APP_NAME }}
+#         echo ""
+#         echo "Service details:"
+#         kubectl describe service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }}
+
 name: Deploy to AKS
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
-env:
-  APP_NAME: ${{ values.name }}
-  NAMESPACE: ${{ values.namespace }}
-  {%- if values.acrName %}
-  ACR_NAME: ${{ values.acrName }}
-  IMAGE_NAME: ${{ values.acrName }}.azurecr.io/${{ values.name }}
-  {%- else %}
-  IMAGE_NAME: ${{ values.dockerImage }}
-  {%- endif %}
-
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        # creds: ${{ secrets.AZURE_CREDENTIALS }}
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    {%- if values.acrName %}
-    - name: Login to Azure Container Registry
-      run: |
-        az acr login --name ${{ env.ACR_NAME }}
+      - name: Set AKS Context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: <your-rg>
+          cluster-name: <your-aks>
 
-    - name: Build and Push Docker Image
-      run: |
-        docker build -t ${{ env.IMAGE_NAME }}:latest .
-        docker push ${{ env.IMAGE_NAME }}:latest
-    {%- endif %}
-
-    - name: Set AKS Context
-      uses: azure/aks-set-context@v3
-      with:
-        resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
-        cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
-
-    - name: Create Namespace
-      run: |
-        kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
-        echo "Namespace ${{ env.NAMESPACE }} created or already exists"
-
-    - name: Apply Namespace Configuration
-      run: |
-        kubectl apply -f k8s/namespace.yaml
-
-    - name: Deploy Application to AKS
-      run: |
-        kubectl apply -f k8s/deployment.yaml -n ${{ env.NAMESPACE }}
-        kubectl apply -f k8s/service.yaml -n ${{ env.NAMESPACE }}
-
-    - name: Wait for Deployment
-      run: |
-        kubectl rollout status deployment/${{ env.APP_NAME }} -n ${{ env.NAMESPACE }} --timeout=5m
-
-    - name: Get Service Details
-      run: |
-        echo "Waiting for service to be ready..."
-        sleep 10
-        kubectl get service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }}
-        
-        EXTERNAL_IP=$(kubectl get service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-        SERVICE_PORT=$(kubectl get service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }} -o jsonpath='{.spec.ports[0].port}')
-        
-        if [ -z "$EXTERNAL_IP" ]; then
-          echo "Warning: External IP not assigned yet. It may take a few minutes."
-          echo "Run 'kubectl get service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }}' to check status"
-        else
-          echo "================================"
-          echo "Application deployed successfully!"
-          echo "Access your application at: http://$EXTERNAL_IP:$SERVICE_PORT"
-          echo "Namespace: ${{ env.NAMESPACE }}"
-          echo "================================"
-        fi
-
-    - name: Show Deployment Status
-      run: |
-        echo "Pods in namespace ${{ env.NAMESPACE }}:"
-        kubectl get pods -n ${{ env.NAMESPACE }} -l app=${{ env.APP_NAME }}
-        echo ""
-        echo "Service details:"
-        kubectl describe service ${{ env.APP_NAME }}-service -n ${{ env.NAMESPACE }}
+      - name: Deploy
+        run: |
+          kubectl create namespace ${{ values.namespace }} || true
+          kubectl apply -f k8s/
