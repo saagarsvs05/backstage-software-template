@@ -1,12 +1,29 @@
+# apiVersion: backstage.io/v1alpha1
+# kind: Component
+# metadata:
+#   name: ${{ values.app_name }}
+#   description: Angular app created using Backstage and aks
+#   annotations:
+#     github.com/project-slug: saagarsvs05/${{values.app_name}}
+#     backstage.io/kubernetes-id: ${{ values.name }}
+#     backstage.io/kubernetes-namespace: ${{ values.namespace }}
+# spec:
+#   type: service
+#   lifecycle: production
+#   owner: ${{ values.owner }}
+#   system: aks-platform
+
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{ values.app_name }}
-  description: Angular app created using Backstage and aks
+  name: ${{ values.name }}
+  description: Angular app created using Backstage and AKS
+
   annotations:
-    github.com/project-slug: saagarsvs05/${{values.app_name}}
+    github.com/project-slug: ${{ values.owner }}/${{ values.name }}
     backstage.io/kubernetes-id: ${{ values.name }}
     backstage.io/kubernetes-namespace: ${{ values.namespace }}
+
 spec:
   type: service
   lifecycle: production
