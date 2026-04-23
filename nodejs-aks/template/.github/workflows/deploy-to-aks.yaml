@@ -23,7 +23,7 @@ jobs:
       
       - name: Login to ACR
         run: |
-        az acr login --name ${{ '${{ secrets.ACR_NAME }}' }} --username ${{ '${{ secrets.ACR_USERNAME }}' }} --password ${{ '${{ secrets.ACR_PASS }}' }}
+          az acr login --name ${{ '${{ secrets.ACR_NAME }}' }} --username ${{ '${{ secrets.ACR_USERNAME }}' }} --password ${{ '${{ secrets.ACR_PASS }}' }}
       
       - name: Set up short SHA
         id: vars
