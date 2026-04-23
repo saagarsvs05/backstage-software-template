@@ -1,7 +1,13 @@
 name: Deploy to AKS
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
 
 jobs:
   deploy:
@@ -18,8 +24,8 @@ jobs:
       - name: Set AKS Context
         uses: azure/aks-set-context@v3
         with:
-          resource-group: <your-rg>
-          cluster-name: <your-aks>
+          resource-group: ${{ values.resource_group }}
+          cluster-name: ${{ values.aks_cluster }}
 
       - name: Deploy
         run: |
