@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: ${{ values.app_name }}
-  description: Node.js app deployed on AKS
+  description: Node.js app deployed on AKS.
 
   annotations:
     github.com/project-slug: ${{ values.owner }}/${{ values.app_name }}
