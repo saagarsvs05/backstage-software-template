@@ -8,6 +8,7 @@ metadata:
     github.com/project-slug: ${{ values.owner }}/${{ values.app_name }}
     backstage.io/kubernetes-id: ${{ values.app_name }}
     backstage.io/kubernetes-namespace: ${{ values.namespace }}
+    github.com/workflows: deploy-to-aks.yaml
 
 spec:
   type: service
