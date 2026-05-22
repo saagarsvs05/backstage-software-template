@@ -13,7 +13,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: development
   system: aks-platform
 
 # apiVersion: backstage.io/v1alpha1
